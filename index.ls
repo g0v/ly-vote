@@ -1,9 +1,8 @@
 <- $
 lyvote.render do
   /* optional argument */
-  cx: 600
+  cx: 500
   cy: 500                            # chart center coordinate
-  transform: "scale(0.8)"            # chart transformation
   #seat-count:  [12 16 18 22 24 21]  # seat count in each row, totally 6 rows. auto-gen if not provided
   seat-mapping: lyvote.map.linear
 

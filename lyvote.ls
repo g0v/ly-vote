@@ -1,7 +1,7 @@
 
 @lyvote =
   svg: null
-  config: 
+  config:
     cx: 500
     cy: 500
     #seat-count:  [12 16 18 22 24 21] now seat-count is auto-calculated
@@ -57,10 +57,10 @@
         @order[j] = t
         @_sort(r, limit, level+1, L, j-1)
         @_sort(r, limit, level+1, j+1, R)
-    
+
       sort: (r) ->
         @_sort(r, @limit++, 0, 0, @order.length-1)
-        
+
       indexOf: (r, name) ->
         @order[@map[name] ?= @idx++ ]0
 
@@ -112,7 +112,7 @@
             @order[it] = @order[i]
             @order[i]  = t
         return @order[@map[name] ?= @idx++ ]
-            
+
 
   _idx: 0
   _map: {}
@@ -127,7 +127,7 @@
     @config.seat-mapping = map-obj
     _pt = ~> @seat-position @seat-mapping it.name
     @seats.transition! .duration 750 .attr \transform ~> "translate(#{(_pt it)0},#{(_pt it)1})"
-    
+
   seat-position: (idx) ->
     sc = @config.seat-count
     sc = [sc[to i].reduce (+) for ,i in sc]
@@ -148,19 +148,19 @@
       @config.seat-count = _sc.map -> Math.round it*mlys.length/_sc_total
     idx = 0
     for mly in mlys
-      @h-name[mly.name] = 
+      @h-name[mly.name] =
         name: mly.name
         vote: 0
         party: mly.party
         idx: idx++
-      @h-party[mly.party] ?= @h-party[0]++ 
+      @h-party[mly.party] ?= @h-party[0]++
     for names,i in @config.vote
-      for name in names 
+      for name in names
         @h-name[name].vote = i+1
 
     @svg = d3.select @config.node .append \svg
-       .attr \width \100%
-       .attr \height \100%
+       .attr \viewBox "0 0 1024 500"
+       .attr \preserveAspectRatio "xMinYMin meet"
 
     defs = @svg.selectAll \defs .data mlys .enter! .append \pattern
       .attr \id ~> \defs_h + @h-name[it.name].idx
@@ -171,7 +171,7 @@
       .attr \height 50
 
     imgs = defs.append \image
-      .attr \xlink:href -> "http://avatars.io/50a65bb26e293122b0000073/#{CryptoJS.MD5('MLY/'+it.name).toString()}?size=small"
+      .attr \xlink:href -> "http://avatars.io/50a65bb26e293122b0000073/#{CryptoJS.MD5('MLY/'+it.name).toString()}?size=medium"
       .attr \x 0
       .attr \y 0
       .attr \width 50
@@ -180,12 +180,12 @@
 
     panel = @svg.append \g
        .attr \transform ~> @config.transform
-    
+
     _pt = ~> @seat-position @seat-mapping it.name
     @seats = panel.selectAll \g.seat
-       .data [@h-name[it] for it of @h-name].sort( (a,b) ~> 
+       .data [@h-name[it] for it of @h-name].sort( (a,b) ~>
          @h-party[a.party] - @h-party[b.party]) .enter! .append \g
-       .attr \transform ~> "translate(#{(_pt it)0},#{(_pt it)1})"
+       .attr \transform ~> "translate(#{(_pt it)0},#{(_pt it)1}) rotate(180) scale(-1, -1)"
 
     lockcell = null
     @seats.append \circle
@@ -193,14 +193,14 @@
        .attr \r 20
        .attr \fill ~> @colors[it.party]
        .style \opacity ~> if it.vote == 0 then 0.3 else 1
-    .on \click ~> 
+    .on \click ~>
        if lockcell
          d3.select lockcell .attr \fill ~> @colors[it.party]
            .transition! .duration 500
            .attr \transform "scale(1)"
            .attr \stroke \none
            .style \opacity ~> if it.vote == 0 then 0.3 else 1
-       if lockcell == d3.event.target 
+       if lockcell == d3.event.target
          return lockcell := null
        lockcell := d3.event.target
        d3.select d3.event.target .attr \fill -> "url(\#defs_h#{it.idx})"
@@ -211,7 +211,7 @@
          .style \opacity  1
 
     @seats.append \path
-       .attr \d ~> switch it.vote 
+       .attr \d ~> switch it.vote
        |1 => "M-12 0 L0 10 L11 -11"
        |2 => "M-10,-10 L10,10 L0 0 L-10 10 L10 -10"
        |3 => "M-10 0 L10 00"
@@ -245,11 +245,10 @@
   factory: (config) ->
     @config = config
     @render = ->
-      d3.json @config.namelist, (error, json) ~> 
+      d3.json @config.namelist, (error, json) ~>
         @generate.call @, error, json
       @
     @
-      
     
   render: (config) ->
     unless config.vote

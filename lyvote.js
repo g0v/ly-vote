@@ -307,12 +307,12 @@
           this.hName[name].vote = i + 1;
         }
       }
-      this.svg = d3.select(this.config.node).append('svg').attr('width', '100%').attr('height', '100%');
+      this.svg = d3.select(this.config.node).append('svg').attr('viewBox', "0 0 1024 500").attr('preserveAspectRatio', "xMinYMin meet");
       defs = this.svg.selectAll('defs').data(mlys).enter().append('pattern').attr('id', function(it){
         return 'defs_h' + this$.hName[it.name].idx;
       }).attr('patternUnits', 'userSpaceOnUse').attr('x', 30).attr('y', 30).attr('width', 50).attr('height', 50);
       imgs = defs.append('image').attr('xlink:href', function(it){
-        return "http://avatars.io/50a65bb26e293122b0000073/" + CryptoJS.MD5('MLY/' + it.name).toString() + "?size=small";
+        return "http://avatars.io/50a65bb26e293122b0000073/" + CryptoJS.MD5('MLY/' + it.name).toString() + "?size=medium";
       }).attr('x', 0).attr('y', 0).attr('width', 50).attr('height', 50).attr('transform', "scale(0.9)");
       panel = this.svg.append('g').attr('transform', function(){
         return this$.config.transform;
@@ -329,7 +329,7 @@
       }.call(this)).sort(function(a, b){
         return this$.hParty[a.party] - this$.hParty[b.party];
       })).enter().append('g').attr('transform', function(it){
-        return "translate(" + _pt(it)[0] + "," + _pt(it)[1] + ")";
+        return "translate(" + _pt(it)[0] + "," + _pt(it)[1] + ") rotate(180) scale(-1, -1)";
       });
       lockcell = null;
       this.seats.append('circle').attr('class', 'mly-seat').attr('r', 20).attr('fill', function(it){
