@@ -418,6 +418,11 @@
         });
         x$.find('span').hide();
       }
+      [0, 1, 2].map(function(it){
+        return config.vote[it] = config.vote[it].filter(function(it){
+          return it;
+        });
+      });
       return new this.factory(import$(import$({}, this.config), config)).render();
     }
   };
