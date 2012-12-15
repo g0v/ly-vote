@@ -392,8 +392,19 @@
         return it.name;
       });
     },
+    factory: function(config){
+      this.config = config;
+      this.render = function(){
+        var this$ = this;
+        d3.json(this.config.namelist, function(error, json){
+          return this$.generate.call(this$, error, json);
+        });
+        return this;
+      };
+      return this;
+    },
     render: function(config){
-      var x$, this$ = this;
+      var x$;
       if (!config.vote) {
         x$ = $(config.node);
         x$.find('span.approval').each(function(){
@@ -407,12 +418,10 @@
         });
         x$.find('span').hide();
       }
-      import$(this.config, config);
-      return d3.json(config.namelist, function(error, json){
-        return this$.generate.call(this$, error, json);
-      });
+      return new this.factory(import$(import$({}, this.config), config)).render();
     }
   };
+  this.lyvote.factory.prototype = this.lyvote;
   function curry$(f, args){
     return f.length > 1 ? function(){
       var params = args ? args.concat() : [];
