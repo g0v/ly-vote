@@ -312,7 +312,7 @@
         return 'defs_h' + this$.hName[it.name].idx;
       }).attr('patternUnits', 'userSpaceOnUse').attr('x', 30).attr('y', 30).attr('width', 50).attr('height', 50);
       imgs = defs.append('image').attr('xlink:href', function(it){
-        return "http://avatars.io/50a65bb26e293122b0000073/" + CryptoJS.MD5('MLY/' + it.name).toString() + "?size=small";
+        return "http://avatars.io/50a65bb26e293122b0000073/" + CryptoJS.MD5('MLY/' + it.name).toString() + "?size=medium";
       }).attr('x', 0).attr('y', 0).attr('width', 50).attr('height', 50).attr('transform', "scale(0.9)");
       panel = this.svg.append('g').attr('transform', function(){
         return this$.config.transform;

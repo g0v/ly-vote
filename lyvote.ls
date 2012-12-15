@@ -171,7 +171,7 @@
       .attr \height 50
 
     imgs = defs.append \image
-      .attr \xlink:href -> "http://avatars.io/50a65bb26e293122b0000073/#{CryptoJS.MD5('MLY/'+it.name).toString()}?size=small"
+      .attr \xlink:href -> "http://avatars.io/50a65bb26e293122b0000073/#{CryptoJS.MD5('MLY/'+it.name).toString()}?size=medium"
       .attr \x 0
       .attr \y 0
       .attr \width 50
