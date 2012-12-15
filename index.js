@@ -2,9 +2,8 @@
   $(function(){
     return lyvote.render({
       /* optional argument */
-      cx: 600,
+      cx: 500,
       cy: 500,
-      transform: "scale(0.8)",
       seatMapping: lyvote.map.linear
       /* required argument */,
       namelist: "voter.json",
