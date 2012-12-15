@@ -1,4 +1,10 @@
-ly-vote
-=======
+## 民進黨團提案刪除核四101年度預算投票結果：
+### 出席 	93	贊成	45	反對	47	棄權	1
+### 提案不通過。
 
-Voting Result Visualization of Legislative Committee Members
+
+立委投票結果產生器
+------------------
+
+幫你把立委在國會表決的結果畫成一目了然的圖表！
+Generated with [http://bl.ocks.org/4248542](http://bl.ocks.org/4248542)
