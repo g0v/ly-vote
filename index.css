@@ -1,0 +1,17 @@
+html, body {
+  width: 100%;
+  height:100%
+}
+
+.mly-seat {
+  /*stroke: #f00*/
+  cursor: pointer;
+}
+
+.mly-vote {
+  font-family: arial;
+}
+.mly-name {
+  font-size: 15px;
+  cursor: pointer;
+}
