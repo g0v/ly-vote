@@ -427,6 +427,17 @@
     }
   };
   this.lyvote.factory.prototype = this.lyvote;
+  $(function(){
+    return $('.twlyvote').each(function(){
+      var ref$, json, mapper;
+      ref$ = [$(this).data('mly-list'), $(this).data('mapper') || "linear"], json = ref$[0], mapper = ref$[1];
+      return lyvote.render({
+        seatMapping: lyvote.map[mapper],
+        namelist: json,
+        node: "#" + this.id
+      });
+    });
+  });
   function curry$(f, args){
     return f.length > 1 ? function(){
       var params = args ? args.concat() : [];

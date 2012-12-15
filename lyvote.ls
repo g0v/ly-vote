@@ -257,7 +257,15 @@
             ..find \span.veto .each -> config.[]vote[1] = $ @ .text! / ' '
             ..find \span.abstention .each -> config.[]vote[2] = $ @ .text! / ' '
             ..find \span .hide!
-    [0 to 2].map -> config.vote[it] = config.vote[it].filter (->it)
+    [0 to 2].map -> config.vote[it] = config.vote[it].filter ->it
     new @factory {}<<<@config<<<config .render!
 
 @lyvote.factory.prototype = @lyvote
+
+<- $
+$ \.twlyvote .each -> 
+  [json,mapper] = [($ @ .data \mly-list ),($ @ .data \mapper ) || "linear"]
+  lyvote.render do
+    seat-mapping: lyvote.map[mapper]
+    namelist: json
+    node: "#"+@.id
