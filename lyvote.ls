@@ -242,6 +242,14 @@
        .attr \text-anchor \middle
        .text (.name)
 
+  factory: (config) ->
+    @config = config
+    @render = ->
+      d3.json @config.namelist, (error, json) ~>
+        @generate.call @, error, json
+      @
+    @
+    
   render: (config) ->
     unless config.vote
         $ config.node
@@ -249,7 +257,6 @@
             ..find \span.veto .each -> config.[]vote[1] = $ @ .text! / ' '
             ..find \span.abstention .each -> config.[]vote[2] = $ @ .text! / ' '
             ..find \span .hide!
-    @config <<< config
-    d3.json config.namelist, (error, json) ~>
-      @generate.call @, error, json
+    new @factory {}<<<@config<<<config .render!
 
+@lyvote.factory.prototype = @lyvote
