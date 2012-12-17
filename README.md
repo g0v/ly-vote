@@ -8,3 +8,13 @@
 
 幫你把立委在國會表決的結果畫成一目了然的圖表！
 Generated with [http://bl.ocks.org/4248542](http://bl.ocks.org/4248542)
+
+### Credit
+
+Original concept from clkao, 
+Initial version implemented by tkirby, 
+Responsive SVG by hlb.
+
+### License
+
+ly-vote,  as a sub-project under g0v.tw, is Copyright © 2012 g0v.tw. It is free software, and may be redistributed under the terms specified in the MIT-LICENSE file.
