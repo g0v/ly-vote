@@ -167,6 +167,7 @@
         @h-name[name].vote = i+1
 
     @svg = d3.select @config.node .append \svg
+       .attr \class \lyvote
        .attr \viewBox "0 0 1024 500"
        .attr \preserveAspectRatio "xMinYMin meet"
 
@@ -201,22 +202,28 @@
        .attr \r 20
        .attr \fill ~> @colors[it.party]
        .style \opacity ~> if it.vote == 0 then 0.3 else 1
-    .on \click ~>
+    @seats.on \click ~>
        if lockcell
-         d3.select lockcell .attr \fill ~> @colors[it.party]
+         d3.select lockcell .select \circle .attr \fill ~> @colors[it.party]
            .transition! .duration 500
            .attr \transform "scale(1)"
            .attr \stroke \none
            .style \opacity ~> if it.vote == 0 then 0.3 else 1
-       if lockcell == d3.event.target
-         return lockcell := null
-       lockcell := d3.event.target
-       d3.select d3.event.target .attr \fill -> "url(\#defs_h#{it.idx})"
+         d3.select lockcell .select \path .transition!duration 750 .style \opacity 1.0
+         d3.select lockcell .select \rect .transition!duration 750 .style \opacity 0.4
+         d3.select lockcell .select \text .transition!duration 750 .style \opacity 1.0
+       p = d3.event.target.parentNode
+       if lockcell == p then return lockcell := null
+       lockcell := p
+       d3.select lockcell .select \circle .attr \fill -> "url(\#defs_h#{it.idx})"
          .transition! .duration 500
          .attr \transform "scale(2)"
          .attr \stroke ~> @colors[it.party]
          .attr \stroke-width \3px
          .style \opacity  1
+       d3.select lockcell .select \path .transition!duration 750 .style \opacity 0.1
+       d3.select lockcell .select \rect .transition!duration 750 .style \opacity 0.0
+       d3.select lockcell .select \text .transition!duration 750 .style \opacity 0.1
 
     @seats.append \path
        .attr \d ~> switch it.vote
@@ -228,7 +235,7 @@
        .attr \stroke ~> switch it.vote
        |1 => \#0b0
        |2 => \#b00
-       |3 => \#999
+       |3 => \#bb0
        |otherwise => \#b00
        .attr \stroke-width \5px
        .attr \fill \none
@@ -249,7 +256,7 @@
        .attr \y 22
        .attr \text-anchor \middle
        .text (.name)
-    color = d3.scale.ordinal! .range <[#090 #900 #cc0 #999 #070 #700 #aa0 #777]>
+    color = d3.scale.ordinal! .range <[#0b0 #b00 #bb0 #999 #070 #700 #aa0 #777]>
       .domain <[贊成 反對 棄權 缺席]>
     arc = d3.svg.arc!outerRadius 80 .innerRadius 20
     pie = d3.layout.pie!sort null .value (-> it.1) .sort d3.ascending .startAngle 0

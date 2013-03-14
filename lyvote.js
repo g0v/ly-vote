@@ -321,7 +321,7 @@
           this.hName[name].vote = i + 1;
         }
       }
-      this.svg = d3.select(this.config.node).append('svg').attr('viewBox', "0 0 1024 500").attr('preserveAspectRatio', "xMinYMin meet");
+      this.svg = d3.select(this.config.node).append('svg').attr('class', 'lyvote').attr('viewBox', "0 0 1024 500").attr('preserveAspectRatio', "xMinYMin meet");
       defs = this.svg.selectAll('defs').data(mlys).enter().append('pattern').attr('id', function(it){
         return 'defs_h' + this$.hName[it.name].idx;
       }).attr('patternUnits', 'userSpaceOnUse').attr('x', 30).attr('y', 30).attr('width', 50).attr('height', 50);
@@ -354,9 +354,11 @@
         } else {
           return 1;
         }
-      }).on('click', function(){
+      });
+      this.seats.on('click', function(){
+        var p;
         if (lockcell) {
-          d3.select(lockcell).attr('fill', function(it){
+          d3.select(lockcell).select('circle').attr('fill', function(it){
             return this$.colors[it.party];
           }).transition().duration(500).attr('transform', "scale(1)").attr('stroke', 'none').style('opacity', function(it){
             if (it.vote === 0) {
@@ -365,16 +367,23 @@
               return 1;
             }
           });
+          d3.select(lockcell).select('path').transition().duration(750).style('opacity', 1.0);
+          d3.select(lockcell).select('rect').transition().duration(750).style('opacity', 0.4);
+          d3.select(lockcell).select('text').transition().duration(750).style('opacity', 1.0);
         }
-        if (lockcell === d3.event.target) {
+        p = d3.event.target.parentNode;
+        if (lockcell === p) {
           return lockcell = null;
         }
-        lockcell = d3.event.target;
-        return d3.select(d3.event.target).attr('fill', function(it){
+        lockcell = p;
+        d3.select(lockcell).select('circle').attr('fill', function(it){
           return "url(#defs_h" + it.idx + ")";
         }).transition().duration(500).attr('transform', "scale(2)").attr('stroke', function(it){
           return this$.colors[it.party];
         }).attr('stroke-width', '3px').style('opacity', 1);
+        d3.select(lockcell).select('path').transition().duration(750).style('opacity', 0.1);
+        d3.select(lockcell).select('rect').transition().duration(750).style('opacity', 0.0);
+        return d3.select(lockcell).select('text').transition().duration(750).style('opacity', 0.1);
       });
       this.seats.append('path').attr('d', function(it){
         switch (it.vote) {
@@ -396,7 +405,7 @@
         case 2:
           return '#b00';
         case 3:
-          return '#999';
+          return '#bb0';
         default:
           return '#b00';
         }
@@ -405,7 +414,7 @@
       this.seats.append('text').attr('class', 'mly-name').attr('y', 22).attr('text-anchor', 'middle').text(function(it){
         return it.name;
       });
-      color = d3.scale.ordinal().range(['#090', '#900', '#cc0', '#999', '#070', '#700', '#aa0', '#777']).domain(['贊成', '反對', '棄權', '缺席']);
+      color = d3.scale.ordinal().range(['#0b0', '#b00', '#bb0', '#999', '#070', '#700', '#aa0', '#777']).domain(['贊成', '反對', '棄權', '缺席']);
       arc = d3.svg.arc().outerRadius(80).innerRadius(20);
       pie = d3.layout.pie().sort(null).value(function(it){
         return it[1];
