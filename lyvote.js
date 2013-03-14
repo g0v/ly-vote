@@ -405,11 +405,11 @@
       this.seats.append('text').attr('class', 'mly-name').attr('y', 22).attr('text-anchor', 'middle').text(function(it){
         return it.name;
       });
-      color = d3.scale.ordinal().range(['#090', '#900', '#cc0', '#999', '#070', '#700', '#aa0', '#777']);
-      arc = d3.svg.arc().outerRadius(80).innerRadius(10);
+      color = d3.scale.ordinal().range(['#090', '#900', '#cc0', '#999', '#070', '#700', '#aa0', '#777']).domain(['贊成', '反對', '棄權', '缺席']);
+      arc = d3.svg.arc().outerRadius(80).innerRadius(20);
       pie = d3.layout.pie().sort(null).value(function(it){
         return it[1];
-      });
+      }).sort(d3.ascending).startAngle(0);
       pieData = [
         ["贊成", this.config.vote[0].length], ["反對", this.config.vote[1].length], ["棄權", this.config.vote[2].length], [
           "缺席", this.config.seatCount.reduce(curry$(function(x$, y$){
@@ -421,16 +421,17 @@
           }))
         ]
       ];
+      pieData.sort(function(it){
+        return it[1];
+      });
       this.pie = panel.append('g').attr('class', 'pie').attr('transform', "translate(" + this.config.cx + "," + this.config.cy + ") scale(3.2) translate(0 -50)").on('click', function(){
         this$.config.min = !this$.config.min;
         return this$.remap(this$.config.seatMapping);
       });
       piecut = this.pie.selectAll('g.arc').data(pie(pieData)).enter().append('g').attr('class', 'arc');
       piecut.append('path').attr('d', arc).style('fill', function(n, i){
-        return color(i);
-      }).style('stroke', function(n, i){
-        return color(i + 4);
-      }).style('stroke-width', '2px');
+        return color(n.data[0]);
+      });
       return this.pie.selectAll('text').data(pie(pieData)).enter().append('text').attr('transform', function(it){
         return "translate(" + arc.centroid(it) + ") translate(0 0)";
       }).style('font-size', '11px').style('text-anchor', 'middle').text(function(it){

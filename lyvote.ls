@@ -250,14 +250,16 @@
        .attr \text-anchor \middle
        .text (.name)
     color = d3.scale.ordinal! .range <[#090 #900 #cc0 #999 #070 #700 #aa0 #777]>
-    arc = d3.svg.arc!outerRadius 80 .innerRadius 10
-    pie = d3.layout.pie!sort null .value -> it.1
+      .domain <[贊成 反對 棄權 缺席]>
+    arc = d3.svg.arc!outerRadius 80 .innerRadius 20
+    pie = d3.layout.pie!sort null .value (-> it.1) .sort d3.ascending .startAngle 0
     pie-data = [
       ["贊成", @config.vote.0.length] 
       ["反對", @config.vote.1.length]
       ["棄權", @config.vote.2.length]
       ["缺席", (@config.seat-count.reduce (+)) - [0 to 2].map(~> @config.vote[it].length).reduce (+)]
     ]
+    pie-data.sort -> it.1
     @pie = panel.append \g .attr \class \pie
       .attr \transform "translate(#{@config.cx},#{@config.cy}) scale(3.2) translate(0 -50)"
       .on \click ~> 
@@ -267,9 +269,7 @@
       .attr \class \arc
     piecut.append \path
       .attr \d arc
-      .style \fill (n,i) -> color i
-      .style \stroke (n,i) -> color i+4
-      .style \stroke-width \2px
+      .style \fill (n,i) -> color n.data.0
 
     @pie.selectAll \text .data pie(pie-data) .enter!append \text
       .attr \transform -> "translate(#{arc.centroid(it)}) translate(0 0)"
