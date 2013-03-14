@@ -15,3 +15,8 @@ html, body {
   font-size: 15px;
   cursor: pointer;
 }
+
+#nuke {
+  width: 900px;
+  margin: 0 auto 0 auto;
+}

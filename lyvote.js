@@ -246,6 +246,9 @@
         return "translate(" + _pt(it)[0] + "," + _pt(it)[1] + ")";
       });
     },
+    seatPositionXx: function(idx){
+      return [0, 0];
+    },
     seatPosition: function(idx){
       var sc, res$, i$, len$, i, ret, ref$, row, len, j, m, v, fn$ = curry$(function(x$, y$){
         return x$ + y$;
@@ -271,7 +274,7 @@
     hName: {},
     hParty: {},
     generate: function(error, mlys){
-      var ref$, _sc, _sc_total, idx, i$, len$, mly, key$, i, names, j$, len1$, name, defs, imgs, panel, _pt, it, lockcell, this$ = this;
+      var ref$, _sc, _sc_total, idx, i$, len$, mly, key$, i, names, j$, len1$, name, defs, imgs, panel, _pt, it, lockcell, color, arc, pie, pieData, this$ = this;
       ref$ = [
         {}, {
           0: 0
@@ -388,9 +391,20 @@
         }
       }).attr('stroke-width', '5px').attr('fill', 'none');
       this.seats.append('rect').attr('class', 'mly-name-box').attr('x', -25).attr('y', 9).attr('width', 50).attr('height', 17).attr('rx', 10).attr('ry', 10).attr('fill', '#fff').style('opacity', 0.4);
-      return this.seats.append('text').attr('class', 'mly-name').attr('y', 22).attr('text-anchor', 'middle').text(function(it){
+      this.seats.append('text').attr('class', 'mly-name').attr('y', 22).attr('text-anchor', 'middle').text(function(it){
         return it.name;
       });
+      color = d3.scale.ordinal().range(['#090', '#900', '#999']);
+      arc = d3.svg.arc().outerRadius(80).innerRadius(10);
+      pie = d3.layout.pie().sort(null).value(function(it){
+        return it[1];
+      });
+      pieData = [["贊成", this.config.vote[0].length], ["反對", this.config.vote[1].length], ["棄權", this.config.vote[2].length]];
+      this.pie = panel.selectAll('g.arc').data(pie(pieData)).enter().append('g').attr('class', 'arc').attr('transform', "translate(" + this.config.cx + "," + this.config.cy + ")");
+      this.pie.append('path').attr('d', arc).style('fill', function(n, i){
+        return color(i);
+      }).style('stroke', '#000').style('stroke-width', '2px');
+      return this.pie = panel.append('circle').attr('cx', this.config.cx).attr('cy', this.config.cy).attr('r', '2px').attr('fill', '#f00');
     },
     factory: function(config){
       this.config = config;
