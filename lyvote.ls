@@ -2,6 +2,7 @@
 @lyvote =
   svg: null
   config:
+    min: true
     cx: 500
     cy: 500
     #seat-count:  [12 16 18 22 24 21] now seat-count is auto-calculated
@@ -127,11 +128,15 @@
     @config.seat-mapping = map-obj
     _pt = ~> @seat-position @seat-mapping it.name
     @seats.transition! .duration 750 .attr \transform ~> "translate(#{(_pt it)0},#{(_pt it)1})"
+    @pie.transition!duration 750 .attr \transform ~> 
+      if @config.min then "translate(#{@config.cx},#{@config.cy}) scale(3.2) translate(0 -50)"
+      else "translate(#{@config.cx},#{@config.cy}) scale(1.3)"
 
   seat-position-xx: (idx) ->
     [0 0]
 
   seat-position: (idx) ->
+    if @config.min then return [ @config.cx, @config.cy ]
     sc = @config.seat-count
     sc = [sc[to i].reduce (+) for ,i in sc]
     ret = (sc.map (-> it - idx) .filter (> 0))
@@ -244,27 +249,33 @@
        .attr \y 22
        .attr \text-anchor \middle
        .text (.name)
-    color = d3.scale.ordinal! .range <[#090 #900 #999]>
+    color = d3.scale.ordinal! .range <[#090 #900 #cc0 #999 #070 #700 #aa0 #777]>
     arc = d3.svg.arc!outerRadius 80 .innerRadius 10
     pie = d3.layout.pie!sort null .value -> it.1
     pie-data = [
       ["贊成", @config.vote.0.length] 
       ["反對", @config.vote.1.length]
       ["棄權", @config.vote.2.length]
+      ["缺席", (@config.seat-count.reduce (+)) - [0 to 2].map(~> @config.vote[it].length).reduce (+)]
     ]
-    @pie = panel.selectAll \g.arc .data pie(pie-data) .enter!append \g 
+    @pie = panel.append \g .attr \class \pie
+      .attr \transform "translate(#{@config.cx},#{@config.cy}) scale(3.2) translate(0 -50)"
+      .on \click ~> 
+        @config.min = !@config.min 
+        @remap @config.seat-mapping
+    piecut = @pie.selectAll \g.arc .data pie(pie-data) .enter!append \g 
       .attr \class \arc
-      .attr \transform "translate(#{@config.cx},#{@config.cy})"
-    @pie.append \path
+    piecut.append \path
       .attr \d arc
       .style \fill (n,i) -> color i
-      .style \stroke \#000
+      .style \stroke (n,i) -> color i+4
       .style \stroke-width \2px
-    @pie = panel.append \circle
-      .attr \cx @config.cx
-      .attr \cy @config.cy
-      .attr \r \2px
-      .attr \fill \#f00
+
+    @pie.selectAll \text .data pie(pie-data) .enter!append \text
+      .attr \transform -> "translate(#{arc.centroid(it)}) translate(0 0)"
+      .style \font-size \11px
+      .style \text-anchor \middle
+      .text -> if it.data[1]==0 then "" else "#{it.data[0]}#{it.data[1]}票"
 
   factory: (config) ->
     @config = config
